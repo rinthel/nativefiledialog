@@ -13,7 +13,7 @@ endif
 ifeq ($(config),release_x64)
   RESCOMP = windres
   TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog.exe
+  TARGET = $(TARGETDIR)/test_savedialog
   OBJDIR = ../obj/x64/Release/test_savedialog
   DEFINES += -DNDEBUG
   INCLUDES += -I../../src/include
@@ -22,9 +22,9 @@ ifeq ($(config),release_x64)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../lib/Release/x64/nfd.lib -lole32 -luuid
-  LDDEPS += ../lib/Release/x64/nfd.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x64 -L/usr/lib64 -m64 -s
+  LIBS += ../lib/Release/x64/libnfd.a
+  LDDEPS += ../lib/Release/x64/libnfd.a
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x64 -L/usr/lib64 -m64 -s -lnfd
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -40,7 +40,7 @@ endif
 ifeq ($(config),release_x86)
   RESCOMP = windres
   TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog.exe
+  TARGET = $(TARGETDIR)/test_savedialog
   OBJDIR = ../obj/x86/Release/test_savedialog
   DEFINES += -DNDEBUG
   INCLUDES += -I../../src/include
@@ -49,9 +49,9 @@ ifeq ($(config),release_x86)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../lib/Release/x86/nfd.lib -lole32 -luuid
-  LDDEPS += ../lib/Release/x86/nfd.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x86 -L/usr/lib32 -m32 -s
+  LIBS += ../lib/Release/x86/libnfd.a
+  LDDEPS += ../lib/Release/x86/libnfd.a
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x86 -L/usr/lib32 -m32 -s -lnfd
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -67,7 +67,7 @@ endif
 ifeq ($(config),debug_x64)
   RESCOMP = windres
   TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog_d.exe
+  TARGET = $(TARGETDIR)/test_savedialog_d
   OBJDIR = ../obj/x64/Debug/test_savedialog
   DEFINES += -DDEBUG
   INCLUDES += -I../../src/include
@@ -76,9 +76,9 @@ ifeq ($(config),debug_x64)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -lole32 -luuid
+  LIBS += -lnfd_d
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x64 -L/usr/lib64 -m64
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x64 -L/usr/lib64 -m64 -lnfd_d
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -94,7 +94,7 @@ endif
 ifeq ($(config),debug_x86)
   RESCOMP = windres
   TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog_d.exe
+  TARGET = $(TARGETDIR)/test_savedialog_d
   OBJDIR = ../obj/x86/Debug/test_savedialog
   DEFINES += -DDEBUG
   INCLUDES += -I../../src/include
@@ -103,9 +103,9 @@ ifeq ($(config),debug_x86)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g
   ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -lole32 -luuid
+  LIBS += -lnfd_d
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x86 -L/usr/lib32 -m32
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x86 -L/usr/lib32 -m32 -lnfd_d
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef

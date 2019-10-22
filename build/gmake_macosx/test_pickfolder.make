@@ -11,20 +11,28 @@ endif
 .PHONY: clean prebuild prelink
 
 ifeq ($(config),release_x64)
-  RESCOMP = windres
+  ifeq ($(origin CC), default)
+    CC = clang
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = clang++
+  endif
+  ifeq ($(origin AR), default)
+    AR = ar
+  endif
   TARGETDIR = ../bin
   TARGET = $(TARGETDIR)/test_pickfolder
-  OBJDIR = ../obj/x64/Release/test_pickfolder
+  OBJDIR = obj/x64/Release/test_pickfolder
   DEFINES += -DNDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS += ../lib/Release/x64/libnfd.a -framework Foundation -framework AppKit
   LDDEPS += ../lib/Release/x64/libnfd.a
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -L../lib/Release/x64 -m64 -Wl,-x
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x64 -m64
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -32,53 +40,34 @@ ifeq ($(config),release_x64)
   endef
   define POSTBUILDCMDS
   endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
-	@:
-
-endif
-
-ifeq ($(config),release_x86)
-  RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_pickfolder
-  OBJDIR = ../obj/x86/Release/test_pickfolder
-  DEFINES += -DNDEBUG
-  INCLUDES += -I../../src/include
-  FORCE_INCLUDE +=
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../lib/Release/x86/libnfd.a -framework Foundation -framework AppKit
-  LDDEPS += ../lib/Release/x86/libnfd.a
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -L../lib/Release/x86 -m32 -Wl,-x
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
-  define PREBUILDCMDS
-  endef
-  define PRELINKCMDS
-  endef
-  define POSTBUILDCMDS
-  endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
+all: prebuild prelink $(TARGET)
 	@:
 
 endif
 
 ifeq ($(config),debug_x64)
-  RESCOMP = windres
+  ifeq ($(origin CC), default)
+    CC = clang
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = clang++
+  endif
+  ifeq ($(origin AR), default)
+    AR = ar
+  endif
   TARGETDIR = ../bin
   TARGET = $(TARGETDIR)/test_pickfolder_d
-  OBJDIR = ../obj/x64/Debug/test_pickfolder
+  OBJDIR = obj/x64/Debug/test_pickfolder
   DEFINES += -DDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -framework Foundation -framework AppKit
+  LIBS += -framework Foundation -framework AppKit -lnfd_d
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -L../lib/Debug/x64 -m64
+  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x64 -m64
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -86,34 +75,7 @@ ifeq ($(config),debug_x64)
   endef
   define POSTBUILDCMDS
   endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
-	@:
-
-endif
-
-ifeq ($(config),debug_x86)
-  RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_pickfolder_d
-  OBJDIR = ../obj/x86/Debug/test_pickfolder
-  DEFINES += -DDEBUG
-  INCLUDES += -I../../src/include
-  FORCE_INCLUDE +=
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -framework Foundation -framework AppKit
-  LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -L../lib/Debug/x86 -m32
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
-  define PREBUILDCMDS
-  endef
-  define PRELINKCMDS
-  endef
-  define POSTBUILDCMDS
-  endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
+all: prebuild prelink $(TARGET)
 	@:
 
 endif
@@ -125,18 +87,17 @@ RESOURCES := \
 
 CUSTOMFILES := \
 
-SHELLTYPE := msdos
-ifeq (,$(ComSpec)$(COMSPEC))
-  SHELLTYPE := posix
-endif
-ifeq (/bin,$(findstring /bin,$(SHELL)))
-  SHELLTYPE := posix
+SHELLTYPE := posix
+ifeq (.exe,$(findstring .exe,$(ComSpec)))
+	SHELLTYPE := msdos
 endif
 
-$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)
+$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)
 	@echo Linking test_pickfolder
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
+
+$(CUSTOMFILES): | $(OBJDIR)
 
 $(TARGETDIR):
 	@echo Creating $(TARGETDIR)
@@ -171,10 +132,12 @@ prelink:
 	$(PRELINKCMDS)
 
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH)
-$(GCH): $(PCH)
+$(OBJECTS): $(GCH) $(PCH) | $(OBJDIR)
+$(GCH): $(PCH) | $(OBJDIR)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+else
+$(OBJECTS): | $(OBJDIR)
 endif
 
 $(OBJDIR)/test_pickfolder.o: ../../test/test_pickfolder.c

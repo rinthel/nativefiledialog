@@ -12,20 +12,20 @@ endif
 
 ifeq ($(config),release_x64)
   RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog.exe
-  OBJDIR = ../obj/x64/Release/test_savedialog
+  TARGETDIR = ../lib/Release/x64
+  TARGET = $(TARGETDIR)/libnfd.a
+  OBJDIR = ../obj/x64/Release/nfd
   DEFINES += -DNDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
+  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -Wall -Wextra -fno-exceptions
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -Wall -Wextra -fno-exceptions
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../lib/Release/x64/nfd.lib -lole32 -luuid
-  LDDEPS += ../lib/Release/x64/nfd.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x64 -L/usr/lib64 -m64 -s
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LIBS +=
+  LDDEPS +=
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
@@ -39,20 +39,20 @@ endif
 
 ifeq ($(config),release_x86)
   RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog.exe
-  OBJDIR = ../obj/x86/Release/test_savedialog
+  TARGETDIR = ../lib/Release/x86
+  TARGET = $(TARGETDIR)/libnfd.a
+  OBJDIR = ../obj/x86/Release/nfd
   DEFINES += -DNDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2
+  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -Wall -Wextra -fno-exceptions
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -Wall -Wextra -fno-exceptions
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../lib/Release/x86/nfd.lib -lole32 -luuid
-  LDDEPS += ../lib/Release/x86/nfd.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Release/x86 -L/usr/lib32 -m32 -s
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  LIBS +=
+  LDDEPS +=
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32 -s
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
@@ -66,20 +66,20 @@ endif
 
 ifeq ($(config),debug_x64)
   RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog_d.exe
-  OBJDIR = ../obj/x64/Debug/test_savedialog
+  TARGETDIR = ../lib/Debug/x64
+  TARGET = $(TARGETDIR)/libnfd_d.a
+  OBJDIR = ../obj/x64/Debug/nfd
   DEFINES += -DDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
+  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g -Wall -Wextra -fno-exceptions
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -Wall -Wextra -fno-exceptions
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -lole32 -luuid
+  LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x64 -L/usr/lib64 -m64
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
@@ -93,20 +93,20 @@ endif
 
 ifeq ($(config),debug_x86)
   RESCOMP = windres
-  TARGETDIR = ../bin
-  TARGET = $(TARGETDIR)/test_savedialog_d.exe
-  OBJDIR = ../obj/x86/Debug/test_savedialog
+  TARGETDIR = ../lib/Debug/x86
+  TARGET = $(TARGETDIR)/libnfd_d.a
+  OBJDIR = ../obj/x86/Debug/nfd
   DEFINES += -DDEBUG
   INCLUDES += -I../../src/include
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g
+  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g -Wall -Wextra -fno-exceptions
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g -Wall -Wextra -fno-exceptions
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += -lnfd_d -lole32 -luuid
+  LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -L../lib/Debug/x86 -L/usr/lib32 -m32
-  LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+  ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32
+  LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
   define PREBUILDCMDS
   endef
   define PRELINKCMDS
@@ -119,7 +119,8 @@ all: prebuild prelink $(TARGET)
 endif
 
 OBJECTS := \
-	$(OBJDIR)/test_savedialog.o \
+	$(OBJDIR)/nfd_common.o \
+	$(OBJDIR)/nfd_zenity.o \
 
 RESOURCES := \
 
@@ -131,7 +132,7 @@ ifeq (.exe,$(findstring .exe,$(ComSpec)))
 endif
 
 $(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)
-	@echo Linking test_savedialog
+	@echo Linking nfd
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -154,7 +155,7 @@ else
 endif
 
 clean:
-	@echo Cleaning test_savedialog
+	@echo Cleaning nfd
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(OBJDIR)
@@ -178,7 +179,10 @@ else
 $(OBJECTS): | $(OBJDIR)
 endif
 
-$(OBJDIR)/test_savedialog.o: ../../test/test_savedialog.c
+$(OBJDIR)/nfd_common.o: ../../src/nfd_common.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/nfd_zenity.o: ../../src/nfd_zenity.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

@@ -7,13 +7,37 @@
 -- properly.  Build premake5 from Github master, or, presumably,
 -- use alpha 10 in the future.
 
+
+newoption {
+   trigger     = "linux_backend",
+   value       = "B",
+   description = "Choose a dialog backend for linux",
+   allowed = {
+      { "gtk3", "GTK 3 - link to gtk3 directly" },      
+      { "zenity", "Zenity - generate dialogs on the end users machine with zenity" }
+   }
+}
+
+if not _OPTIONS["linux_backend"] then
+   _OPTIONS["linux_backend"] = "gtk3"
+end
+
 workspace "NativeFileDialog"
   -- these dir specifications assume the generated files have been moved
   -- into a subdirectory.  ex: $root/build/makefile
   local root_dir = path.join(path.getdirectory(_SCRIPT),"../../")
   local build_dir = path.join(root_dir,"build/")
   configurations { "Release", "Debug" }
-  platforms {"x64", "x86"}
+
+  -- Apple stopped distributing an x86 toolchain.  Xcode 11 now fails to build with an 
+  -- error if the invalid architecture is present.
+  --
+  -- Add it back in here to build for legacy systems.
+  filter "system:macosx"
+    platforms {"x64"}
+  filter "system:windows or system:linux"
+    platforms {"x64", "x86"}
+  
 
   objdir(path.join(build_dir, "obj/"))
 
@@ -46,6 +70,8 @@ workspace "NativeFileDialog"
     includedirs {root_dir.."src/include/"}
     targetdir(build_dir.."/lib/%{cfg.buildcfg}/%{cfg.platform}")
 
+    warnings "extra"
+
     -- system build filters
     filter "system:windows"
       language "C++"
@@ -58,10 +84,16 @@ workspace "NativeFileDialog"
       language "C"
       files {root_dir.."src/nfd_cocoa.m"}
 
-    filter "system:linux"
+
+
+    filter {"system:linux", "options:linux_backend=gtk3"}
       language "C"
       files {root_dir.."src/nfd_gtk.c"}
       buildoptions {"`pkg-config --cflags gtk+-3.0`"}
+    filter {"system:linux", "options:linux_backend=zenity"}
+      language "C"
+      files {root_dir.."src/nfd_zenity.c"}
+
 
     -- visual studio filters
     filter "action:vs*"
@@ -96,14 +128,20 @@ local make_test = function(name)
     filter {"configurations:Debug"}
       targetsuffix "_d"
 
-    filter {"configurations:Release", "system:linux"}
+    filter {"configurations:Release", "system:linux", "options:linux_backend=gtk3"}
       linkoptions {"-lnfd `pkg-config --libs gtk+-3.0`"}
+    filter {"configurations:Release", "system:linux", "options:linux_backend=zenity"}
+      linkoptions {"-lnfd"}
 
     filter {"system:macosx"}
       links {"Foundation.framework", "AppKit.framework"}
       
-    filter {"configurations:Debug", "system:linux"}
+    filter {"configurations:Debug", "system:linux", "options:linux_backend=gtk3"}
       linkoptions {"-lnfd_d `pkg-config --libs gtk+-3.0`"}
+    filter {"configurations:Debug", "system:linux", "options:linux_backend=zenity"}
+      linkoptions {"-lnfd_d"}
+
+
 
     filter {"action:gmake", "system:windows"}
       links {"ole32", "uuid"}
@@ -122,26 +160,40 @@ newaction
    execute = function()
 
 
-      local premake_do_action = function(action,os_str,special)
+      local premake_do_action = function(action,os_str,special,args)
          local premake_dir
          if special then
-            premake_dir = "./"..action.."_"..os_str
+            if args['linux_backend'] ~= nil then
+               premake_dir = "./"..action.."_"..os_str..'_zenity'
+            else
+               premake_dir = "./"..action.."_"..os_str
+            end
          else
             premake_dir = "./"..action
          end
          local premake_path = premake_dir.."/premake5.lua"
 
+         -- create an args str to pass along to premake
+         arg_str = ''
+         for arg, val in pairs(args) do
+            arg_str = ' --'..arg..'='..val
+         end
+
          os.execute("mkdir "..premake_dir)
          os.execute("cp premake5.lua "..premake_dir)
-         os.execute("premake5 --os="..os_str.." --file="..premake_path.." "..action)
+         os.execute("premake5 --os=" ..os_str..
+                       " --file="..premake_path..
+                       arg_str..
+                       " "..action)
          os.execute("rm "..premake_path)
       end
       
-      premake_do_action("vs2010", "windows", false)
-      premake_do_action("xcode4", "macosx", false)
-      premake_do_action("gmake", "linux", true)
-      premake_do_action("gmake", "macosx", true)
-      premake_do_action("gmake", "windows", true)
+      premake_do_action("vs2010", "windows", false,{})
+      premake_do_action("xcode4", "macosx", false,{})
+      premake_do_action("gmake", "linux", true,{})
+      premake_do_action("gmake", "linux", true,{linux_backend='zenity'})
+      premake_do_action("gmake", "macosx", true,{})
+      premake_do_action("gmake", "windows", true,{})
    end
 }
 
